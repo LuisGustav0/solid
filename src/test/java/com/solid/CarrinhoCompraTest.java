@@ -2,49 +2,66 @@ package com.solid;
 
 import com.solid.domain.enums.StatusE;
 import com.solid.domain.model.CarrinhoCompra;
+import com.solid.domain.model.Item;
+import com.solid.domain.model.Pedido;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CarrinhoCompraTest {
 
     @Test
-    void testeInicialComCarrinhoCompra() {
-        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+    void testeInicialPedido() {
+        Pedido pedido = Pedido.builder().build();
 
-        assertEquals(StatusE.EM_ABERTO, carrinhoCompra.getStatus());
-        assertEquals(BigDecimal.ZERO, carrinhoCompra.getValorTotal());
+        assertEquals(StatusE.EM_ABERTO, pedido.getStatusE());
+        assertEquals(BigDecimal.ZERO, pedido.getValorPedido());
     }
 
     @Test
-    void testeCarrinhoCompraListaItemVazio() {
-        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+    void testePedidoComCarrinhoCompraListaItemVazio() {
+        Pedido pedido = Pedido.builder().build();
 
-        assertNotNull(carrinhoCompra.getListItem());
-        assertEquals(carrinhoCompra.getListItem().size(), 0);
+        assertNotNull(pedido.getCarrinhoCompra().getListItem());
+        assertEquals(0, pedido.getCarrinhoCompra().getListItem().size());
     }
 
     @Test
-    void testeValidarCarrinhoCompra() {
-        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
-        carrinhoCompra.addItem("Bicicleta", BigDecimal.valueOf(710.10));
-        carrinhoCompra.addItem("Geladeira", BigDecimal.valueOf(1950.15));
-        carrinhoCompra.addItem("Tapete", BigDecimal.valueOf(350.20));
+    void testePedidoValidarCarrinhoCompra() {
+        Item bicicleta = Item.builder().descricao("Bicicleta").valor(BigDecimal.valueOf(710.10)).build();
+        Item geladeira = Item.builder().descricao("Geladeira").valor(BigDecimal.valueOf(1950.15)).build();
+        Item tapete = Item.builder().descricao("Tapete").valor(BigDecimal.valueOf(350.20)).build();
 
-        assertTrue(carrinhoCompra.validarCarrinho());
+        CarrinhoCompra carrinhoCompra = CarrinhoCompra.builder()
+                                                      .addItem(bicicleta)
+                                                      .addItem(geladeira)
+                                                      .addItem(tapete)
+                                                      .build();
+
+        Pedido pedido = Pedido.builder().carrinhoCompra(carrinhoCompra).build();
+
+        assertTrue(pedido.getCarrinhoCompra().validarCarrinho());
     }
 
     @Test
-    void testeCarrinhoCompraConfirmado() {
-        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
-        carrinhoCompra.addItem("Bicicleta", BigDecimal.valueOf(710.10));
-        carrinhoCompra.addItem("Geladeira", BigDecimal.valueOf(1950.15));
-        carrinhoCompra.addItem("Tapete", BigDecimal.valueOf(350.20));
+    void testePedidoCarrinhoCompraConfirmado() {
+        Item bicicleta = Item.builder().descricao("Bicicleta").valor(BigDecimal.valueOf(710.10)).build();
+        Item geladeira = Item.builder().descricao("Geladeira").valor(BigDecimal.valueOf(1950.15)).build();
+        Item tapete = Item.builder().descricao("Tapete").valor(BigDecimal.valueOf(350.20)).build();
 
-        assertTrue(carrinhoCompra.confirmarPedido());
-        assertEquals(StatusE.CONFIRMADO, carrinhoCompra.getStatus());
+        CarrinhoCompra carrinhoCompra = CarrinhoCompra.builder()
+                                                      .addItem(bicicleta)
+                                                      .addItem(geladeira)
+                                                      .addItem(tapete)
+                                                      .build();
+
+        Pedido pedido = Pedido.builder().carrinhoCompra(carrinhoCompra).build();
+
+        assertTrue(pedido.confirmar());
+        assertEquals(StatusE.CONFIRMADO, pedido.getStatusE());
     }
 }
