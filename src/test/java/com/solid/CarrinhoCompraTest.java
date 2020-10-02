@@ -1,36 +1,50 @@
 package com.solid;
 
+import com.solid.domain.enums.StatusE;
 import com.solid.domain.model.CarrinhoCompra;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
 class CarrinhoCompraTest {
 
-    static void firstTest() {
+    @Test
+    void testeInicialComCarrinhoCompra() {
         CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
 
-        carrinhoCompra.exibirStatus();
-        carrinhoCompra.exibirValorTotal();
-
-//        carrinhoCompra.addItem("Bicicleta", BigDecimal.valueOf(710.10));
-//        carrinhoCompra.addItem("Geladeira", BigDecimal.valueOf(1950.15));
-//        carrinhoCompra.addItem("Tapete", BigDecimal.valueOf(350.20));
-
-        carrinhoCompra.exibirListaItem();
-
-        boolean isCarrinhoConfirmado = carrinhoCompra.confirmarPedido();
-
-        if (isCarrinhoConfirmado) {
-            System.out.println("Pedido realizado com sucesso!");
-        } else {
-            System.out.println("Erro na confirmação do pedido. Carrinho não possui itens!");
-        }
-
-        carrinhoCompra.exibirStatus();
-        carrinhoCompra.exibirValorTotal();
+        assertEquals(StatusE.EM_ABERTO, carrinhoCompra.getStatus());
+        assertEquals(BigDecimal.ZERO, carrinhoCompra.getValorTotal());
     }
 
-    public static void main(String[] args) {
-        firstTest();
+    @Test
+    void testeCarrinhoCompraListaItemVazio() {
+        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+
+        assertNotNull(carrinhoCompra.getListItem());
+        assertEquals(carrinhoCompra.getListItem().size(), 0);
+    }
+
+    @Test
+    void testeValidarCarrinhoCompra() {
+        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+        carrinhoCompra.addItem("Bicicleta", BigDecimal.valueOf(710.10));
+        carrinhoCompra.addItem("Geladeira", BigDecimal.valueOf(1950.15));
+        carrinhoCompra.addItem("Tapete", BigDecimal.valueOf(350.20));
+
+        assertTrue(carrinhoCompra.validarCarrinho());
+    }
+
+    @Test
+    void testeCarrinhoCompraConfirmado() {
+        CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+        carrinhoCompra.addItem("Bicicleta", BigDecimal.valueOf(710.10));
+        carrinhoCompra.addItem("Geladeira", BigDecimal.valueOf(1950.15));
+        carrinhoCompra.addItem("Tapete", BigDecimal.valueOf(350.20));
+
+        assertTrue(carrinhoCompra.confirmarPedido());
+        assertEquals(StatusE.CONFIRMADO, carrinhoCompra.getStatus());
     }
 }
