@@ -32,4 +32,13 @@ public class Pedido {
 
         return true;
     }
+
+    public static class PedidoBuilder {
+
+        public PedidoBuilder() {
+            this.statusE = StatusE.EM_ABERTO;
+            this.carrinhoCompra = CarrinhoCompra.builder().build();
+            this.valorPedido = BigDecimal.ZERO;
+        }
+    }
 }
